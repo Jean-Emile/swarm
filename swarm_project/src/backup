@@ -1,0 +1,71 @@
+#include "mavlink_serial.h"
+#include <iostream>
+#include "Geopoint.h"
+using namespace std;
+#include <complex>      // std::complex, std::norm
+
+
+#include "utils/Vector3.h"
+
+
+// Converts radians to degrees
+float Rad2Deg(float radians){
+    return radians*(180/3.141592653589793238);
+}
+
+const double pi  =3.141592653589793238462;
+
+
+Vector3 grad_dist(Vector3& pos1, Vector3& pos2,float  d_min, float d_max, float gain){
+	
+	float dist = pos1.DistanceTo(&pos2);
+	float p1=(pi/2)/(d_max-d_min);
+	float p2=-p1*d_max;
+    float V=0;
+    Vector3 gradient;
+    printf("%f",dist);
+	if (dist<=d_max){
+	     V = gain*tan(p1*dist+p2)*tan(p1*dist+p2);
+	     printf("V=%f\n",V);
+	     float res = -2*gain*p1*tan(p1*dist+p2)/(pow(cos(p1*dist+p2),2));  
+	     gradient = ((pos1 - pos2)*res)/dist;
+	    // gradient = -2*gain*p1*tan(p1*dist+p2)/(cos(p1*dist+p2)^2)*(pos1-pos2)/dist;
+printf("RESULT %f %f %f \n",gradient.X,gradient.Y,gradient.Z);
+	     return gradient;
+	}
+	else{
+
+	     V = 0;
+	    // gradient = [0;0;0];
+	     return gradient;
+	}    
+
+}
+
+
+int main(int argc, char **argv) {
+
+
+	
+	
+
+	    Vector3* pos1 = new Vector3(48.11538,-1.639227,10);
+	    
+
+	    Vector3* pos2 = new Vector3(48.115366,-1.639224 ,10 );
+
+	    
+
+	    grad_dist(*pos1,*pos2,5,10,0.1);
+
+
+	    
+	    // Calculate spherical coordinates for the 3D vector
+	 
+	  
+	 
+	
+
+	   
+	return 0;
+}
