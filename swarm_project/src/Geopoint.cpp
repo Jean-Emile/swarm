@@ -1,6 +1,8 @@
 #include "Geopoint.h"
 #include <stdlib.h>
 
+#include <stdio.h>
+
 Geopoint::Geopoint()
 {
 }
@@ -14,6 +16,28 @@ Geopoint::Geopoint(float latitude, float longitude, float altitude){
 	vector.X = latitude;
 	vector.Y = longitude;
 	vector.Z = altitude;
+}
+
+
+/*
+ * N number of discrete points to be generated along the circle
+ */
+std::list<Geopoint> Geopoint::createCircle(int N,double radius){
+	std::list<Geopoint> points;
+ 	int i;
+ 	double angle,dx,dy;
+	for(i=0;i<N;i++){
+		angle = M_PI*2*i/N;
+		dx =  radius*cos(angle);
+		dy = radius*sin(angle);
+		double lat = getlat()+(180/M_PI)*(dy/6378137);
+		double lon = getlon()+(180/M_PI)*(dx/6378137)/cos(getlat()*M_PI/180);
+	//	printf("%f %f\n",lat,lon);
+		points.push_back(Geopoint(lat,lon,getalt()));
+	}
+	
+	return points;
+	
 }
 
 

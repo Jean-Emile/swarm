@@ -217,7 +217,7 @@ void close_port(int fd)
  * This function blocks waiting for serial data in it's own thread
  * and forwards the data once received.
  */
-int serial_wait(int serial_fd,const Mavlink  &mavlink)
+int serial_wait(int serial_fd)
 {
 	int fd = serial_fd;
 
@@ -436,7 +436,7 @@ int Mavlink::open(const char *uart_name,int baudrate){
 	printf("\nREADY, waiting for serial data. %d \n",fd);
 	serial_fd = fd;
 
-	task_serial = thread(serial_wait,fd,&this);
+	task_serial = thread(serial_wait,fd);
 
 
 	return 0;

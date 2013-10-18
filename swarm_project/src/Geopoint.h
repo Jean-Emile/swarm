@@ -2,6 +2,8 @@
 #define GEOPOINT_H_
 
 #include "utils/Vector3.h"
+#include <list>
+
 
 #define MODE_NOT_SEEN	0	/* mode update not seen yet */
 #define MODE_NO_FIX	1	/* none */
@@ -22,6 +24,7 @@ public:
     void setalt(float lon);
     Vector3 getvector();
     double getDistance(Geopoint point);
+    std::list<Geopoint> createCircle(int count,double circleRadius);
 
 	int    mode;	/* Mode of fix */
 private:

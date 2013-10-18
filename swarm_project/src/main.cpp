@@ -1,6 +1,6 @@
 #include "Mavlink.h"
 
-#include "Geopoint.h"
+
 #include "Drone.h"
 #include <unordered_map>
 #include <string>
@@ -11,22 +11,25 @@
 #include <vector>  
 #include <thread>
 #include "Swarm.h"
+#include "gui/Gui.h"
 
-
+#include <gtk/gtk.h>
 
 
 
 int main(int argc, char **argv) {
-
+	
+	gtk_init (&argc, &argv);
+	Gui *gui = new Gui();
 	Mavlink *mavlink = new Mavlink();
 
-	mavlink->open("/dev/ttyACM0",115200);
+	/*mavlink->open("/dev/ttyACM0",115200);
 
 	Swarm *swarm = new Swarm();
 	swarm->AddObs(mavlink);
 	
 	mavlink->wait();
-	
+	*/
 
 //	mavlink->flyhere()
 
@@ -36,7 +39,19 @@ int main(int argc, char **argv) {
 	Geopoint pos1(48.112843,-1.639478,10);
 	Geopoint pos2(48.112854,-1.639431,10);
 	Geopoint pos3(48.512854,-1.689431,10);
+	
+	
+	std::list<Geopoint> resultcircle = pos3.createCircle(10,5);
+	
+	for (std::list<Geopoint>::const_iterator iterator = resultcircle.begin(), end = resultcircle.end(); iterator != end; ++iterator) {
+		Geopoint r = *iterator;
+	  printf("%f %f \n",r.getlat(),r.getlon());
+	  sleep(1);
+	}
+	
+	
 
+	/*
 	Drone drone1(1,pos1);
 	Drone drone2(2,pos2);
 	Drone drone3(3,pos3);
@@ -62,7 +77,7 @@ int main(int argc, char **argv) {
 		printf("result -> %f %f %f \n",entry.second.position.getlat(),entry.second.position.getlon(),entry.second.position.getalt());
 	}
 
-
+*/
 
 	//	   printf("Distance between drone1 %f \n",drone1.getDistance(drone2));
 
