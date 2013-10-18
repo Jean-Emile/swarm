@@ -14,15 +14,16 @@ class Gui
 public:
 	Gui();
 	virtual ~Gui();
+	void start();
+	void addPoint(double lat,double lon);
 
-
-const char *repo_uri;
-char *cachedir, *cachebasedir;
-GOptionContext *context;
-GtkWidget  *boxmap;
-
-OsmGpsMapSource_t map_provider;
-OsmGpsMap *map;
+	const char *repo_uri;
+	char *cachedir, *cachebasedir;
+	GOptionContext *context;
+	GtkWidget  *boxmap;
+	GdkPixbuf *copter;
+	OsmGpsMapSource_t map_provider;
+	OsmGpsMap *map;
 
 };
 

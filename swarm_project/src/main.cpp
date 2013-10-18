@@ -15,13 +15,42 @@
 
 #include <gtk/gtk.h>
 
+Mavlink *mavlink;
+Gui *gui;
+
+void start()
+{
+
+	mavlink = new Mavlink();
+	Repulsive *repulsive = new Repulsive();
+	unordered_map<int,Drone> drones;
+
+	Geopoint pos1(48.112843,-1.639478,10);
+	Geopoint pos2(48.112854,-1.639431,10);
+	Geopoint pos3(48.512854,-1.689431,10);
+	
+	
+	std::list<Geopoint> resultcircle = pos3.createCircle(20,45);
+	
+	for (std::list<Geopoint>::const_iterator iterator = resultcircle.begin(), end = resultcircle.end(); iterator != end; ++iterator) {
+		Geopoint r = *iterator;
+	  printf("%f %f \n",r.getlat(),r.getlon());
+gui->addPoint(r.getlat(),r.getlon());
+	  sleep(1);
+	}
+	
+
+}
 
 
 int main(int argc, char **argv) {
 	
 	gtk_init (&argc, &argv);
-	Gui *gui = new Gui();
-	Mavlink *mavlink = new Mavlink();
+	gui = new Gui();
+	
+	thread t1(start);
+	gui->start();
+	
 
 	/*mavlink->open("/dev/ttyACM0",115200);
 
@@ -33,22 +62,7 @@ int main(int argc, char **argv) {
 
 //	mavlink->flyhere()
 
-	Repulsive *repulsive = new Repulsive();
-	unordered_map<int,Drone> drones;
 
-	Geopoint pos1(48.112843,-1.639478,10);
-	Geopoint pos2(48.112854,-1.639431,10);
-	Geopoint pos3(48.512854,-1.689431,10);
-	
-	
-	std::list<Geopoint> resultcircle = pos3.createCircle(10,5);
-	
-	for (std::list<Geopoint>::const_iterator iterator = resultcircle.begin(), end = resultcircle.end(); iterator != end; ++iterator) {
-		Geopoint r = *iterator;
-	  printf("%f %f \n",r.getlat(),r.getlon());
-	  sleep(1);
-	}
-	
 	
 
 	/*

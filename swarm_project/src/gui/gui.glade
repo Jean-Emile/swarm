@@ -3,6 +3,8 @@
   <!-- interface-requires gtk+ 3.0 -->
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
+    <property name="default_width">1024</property>
+    <property name="default_height">800</property>
     <child>
       <object class="GtkHBox" id="map">
         <property name="visible">True</property>

@@ -28,22 +28,30 @@ Gui::Gui()
 
 
 	/*Set the starting coordinates and zoom level for the map */
-	osm_gps_map_set_zoom (map,  8);
+	osm_gps_map_set_zoom (map, 20);
 
 	/* coordonnées GPS ménéac */
-	osm_gps_map_set_center (map, 47.961304, -2.411175);
+	osm_gps_map_set_center (map, 48.512856,-1.689363);
+	gtk_box_pack_start (GTK_BOX (boxmap), GTK_WIDGET (map), TRUE, TRUE, 0);
 
-
+	copter = gdk_pixbuf_new_from_file_at_size ("copter.png", 15,15,NULL);
 
 
 	gtk_widget_show(boxmap);
 	gtk_widget_show((GtkWidget*)map);
 	gtk_widget_show (main_window);
-	gtk_main ();
+
 
 
 }
 
 Gui::~Gui()
 {
+}
+
+void Gui::addPoint(double lat,double lon){
+ osm_gps_map_image_add(map,lat,lon,copter);
+}
+void Gui::start(){
+	gtk_main ();
 }
