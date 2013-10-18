@@ -20,7 +20,11 @@ public:
     Vector3 operator^(float right);
     Vector3 operator/(float right);
     Vector3 operator^(int right);
-    Vector3 operator+(Vector3& right);
+
+    Vector3 operator+(Vector3 right);
+    Vector3 toUnitVector();
+    Vector3 orthogonal(); 
+    Vector3 cross(Vector3 &that);
 
     
     

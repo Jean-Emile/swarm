@@ -20,6 +20,8 @@ float Vector3::Length(){
  
 
 
+
+
 // Normalizes the vector
 Vector3 Vector3::Normalize(){
     Vector3 vector;
@@ -33,6 +35,62 @@ Vector3 Vector3::Normalize(){
  
     return vector;
 }
+
+Vector3 Vector3::toUnitVector(){
+    Vector3 vector;
+	double lat = X/ 180 * M_PI;
+	double lng = Y/ 180 * M_PI;
+
+    vector.X = cos(lng)*cos(lat);
+        vector.Y = sin(lng)*cos(lat);
+        vector.Z = sin(lat);
+	return vector;
+}
+Vector3     Vector3::orthogonal(){
+    Vector3 vector;
+
+  double minNormal = abs(X);
+            int minIndex = 0;
+            if (abs(Y) < minNormal)
+            {
+                minNormal = abs(Y);
+                minIndex = 1;
+            }
+            if (abs(Z) < minNormal)
+            {
+                minNormal = abs(Z);
+                minIndex = 2;
+            }
+
+            Vector3 B;
+            switch (minIndex)
+            {
+                case 0:
+B.X = 1;
+B.Y =0;
+B.Z = 0;
+                    break;
+                case 1:
+            	        B.X = 0;
+			B.Y =1;
+			B.Z = 0;
+                    break;
+                default:
+                 B.X = 0;
+		B.Y =0;
+		B.Z = 1;
+                    break;
+            }
+
+     Vector3  result;
+
+ result.X = (minNormal *X) -B.X;
+ result.Y = (minNormal *Y) -B.Y;
+ result.Z = (minNormal *Z) -B.Z;
+
+            return result.Normalize();
+}
+
 
 void Vector3::set_x(float x){
 	 this->X = x;
@@ -76,7 +134,8 @@ Vector3 Vector3::operator-( Vector3& right)
     return result;
 }
 
-Vector3 Vector3::operator+( Vector3& right)
+
+Vector3 Vector3::operator+( Vector3 right)
 {
 	Vector3 result;
     result.set_x(x() + right.x());
@@ -84,6 +143,7 @@ Vector3 Vector3::operator+( Vector3& right)
     result.set_z(z() + right.z());
     return result;
 }
+
 
 Vector3 Vector3::operator^(float right){
 	Vector3 result;
@@ -126,4 +186,6 @@ Vector3::~Vector3(void)
 }
 
 
-
+Vector3 Vector3::cross(Vector3 &that){
+  return Vector3(Y * that.Z - Z * that.Y, Z * that.X - X * that.Z, X * that.Y - Y * that.X);
+}
