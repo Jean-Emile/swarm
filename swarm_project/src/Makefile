@@ -11,7 +11,7 @@ OSM_GPS_MAP=osm-gps-map
 CC=g++
 CCFLAGS= -I$(INCDIR)  `pkg-config --cflags gtk+-2.0` 
 CCFLAGS+= -I/usr/include/libsoup-2.4 -I/usr/include/libxml2 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/osmgpsmap
-LDFLAGS= -lpthread -lm -g -llog4c -std=c++0x -losmgpsmap
+LDFLAGS= -lpthread -lm -g -llog4c -lGL -lGLU -lglut -std=gnu++0x -losmgpsmap
 
 
 TARGET= main

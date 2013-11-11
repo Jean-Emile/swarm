@@ -3,6 +3,7 @@
 
 #include "utils/Vector3.h"
 #include <list>
+#include <string>
 
 
 #define MODE_NOT_SEEN	0	/* mode update not seen yet */
@@ -22,6 +23,7 @@ public:
     void setlat(float lat);
     void setlon(float lon);
     void setalt(float lon);
+    std::string toString();
     Vector3 getvector();
     double getDistance(Geopoint point);
     std::list<Geopoint> createCircle(int count,double circleRadius);

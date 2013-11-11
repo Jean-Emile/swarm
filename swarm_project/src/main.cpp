@@ -8,62 +8,65 @@
 
 #include "Repulsive.h"
 #include "Scheduler.h"
-#include <vector>  
+#include <vector>
 #include <thread>
 #include "Swarm.h"
 #include "gui/Gui.h"
 
 #include <gtk/gtk.h>
 
-Mavlink *mavlink;
-Gui *gui;
 
+
+
+/*
 void start()
 {
 
-	mavlink = new Mavlink();
 	Repulsive *repulsive = new Repulsive();
 	unordered_map<int,Drone> drones;
 
-	Geopoint pos1(48.112843,-1.639478,10);
-	Geopoint pos2(48.112854,-1.639431,10);
+
 	Geopoint pos3(48.512854,-1.689431,10);
-	
-	
-	std::list<Geopoint> resultcircle = pos3.createCircle(20,45);
-	
+
+
+	std::list<Geopoint> resultcircle = pos3.createCircle(100,30);
+
 	for (std::list<Geopoint>::const_iterator iterator = resultcircle.begin(), end = resultcircle.end(); iterator != end; ++iterator) {
 		Geopoint r = *iterator;
-	  printf("%f %f \n",r.getlat(),r.getlon());
-gui->addPoint(r.getlat(),r.getlon());
+		  printf("%f %f \n",r.getlat(),r.getlon());
+		gui->addPoint(r);
 	  sleep(1);
 	}
-	
+
 
 }
-
+*/
 
 int main(int argc, char **argv) {
-	
-	gtk_init (&argc, &argv);
-	gui = new Gui();
-	
-	thread t1(start);
-	gui->start();
+
+
+Mavlink	*mavlink = new Mavlink();
+
+Swarm *swarm = new Swarm(mavlink);
+
+	Gui	*gui = new Gui(argc, argv,mavlink,swarm);
+
+gui->start();
+
+
+/*
 	
 
-	/*mavlink->open("/dev/ttyACM0",115200);
 
-	Swarm *swarm = new Swarm();
-	swarm->AddObs(mavlink);
-	
+
+
 	mavlink->wait();
 	*/
 
 //	mavlink->flyhere()
 
 
-	
+
 
 	/*
 	Drone drone1(1,pos1);
@@ -76,7 +79,7 @@ int main(int argc, char **argv) {
 	drones[3]= drone3;
 
 	for (auto entry : drones)
-	{ 
+	{
 		printf("%f %f %f \n",entry.second.position.getlat(),entry.second.position.getlon(),entry.second.position.getalt());
 	}
 
@@ -87,7 +90,7 @@ int main(int argc, char **argv) {
 	// todo plan
 
 	for (auto entry : result)
-	{ 
+	{
 		printf("result -> %f %f %f \n",entry.second.position.getlat(),entry.second.position.getlon(),entry.second.position.getalt());
 	}
 
@@ -95,10 +98,10 @@ int main(int argc, char **argv) {
 
 	//	   printf("Distance between drone1 %f \n",drone1.getDistance(drone2));
 
-	//	
+	//
 
 
-	
+
 
 	/*
 	    Vector3 pos_update = grad_dist(*pos1,*pos2,5,25,0.01);
@@ -109,6 +112,6 @@ int main(int argc, char **argv) {
 	   // printf("Current 3D vector at (%f,%f,%f)\n",pos1->X,pos1->Y,pos1->Z);
 	    printf("Target  3D vector at (%f,%f,%f)\n",pos_update.X,pos_update.Y,pos_update.Z);
 	 */
-	
+
 	return 0;
 }

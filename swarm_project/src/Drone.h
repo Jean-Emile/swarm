@@ -11,15 +11,18 @@ public:
 	virtual ~Drone();
 	Drone* clone();
 	int sysID;
+	void heartbeat();
 
 	Geopoint getPosition();
-    void update_position(Geopoint position);
+    void update_position(Geopoint &position);
     Geopoint position;
+    void setAltitude(float altitude);
+    float getBaroAltitude();
     
 
     double getDistance(Drone drone);
 private:
-  
+  float altitude;
    
 };
 

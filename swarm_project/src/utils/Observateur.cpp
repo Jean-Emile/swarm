@@ -7,11 +7,7 @@
 
 
 using namespace std;
-void Observateur::Update(const Observable* observable) const
-{
-  //on affiche l'état de la variable
- // cout<<observable->Statut()<<endl;
-}
+
  
 Observateur::~Observateur()
 {
@@ -40,6 +36,7 @@ void Observateur::DelObs(Observable* obs)
  
 void Observable::AddObs( Observateur* obs)
 {
+	printf("add Obs \n");
     //on ajoute l'observateur à notre liste 
     m_list.push_back(obs);
 
@@ -68,14 +65,14 @@ Observable::~Observable()
        }
 }
  
-void Observable::Notify(void)
+void Observable::Notify(mavlink_message_t value)
 {
         //on prévient chaque observateur que l'on change de valeur
         iterator itb=m_list.begin();
         const_iterator ite=m_list.end();
-       
+  
        for(;itb!=ite;++itb)
        {
-               (*itb)->Update(this);
+               (*itb)->Update(this,value);
        }
 }

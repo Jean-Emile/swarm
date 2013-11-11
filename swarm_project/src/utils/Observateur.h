@@ -5,6 +5,8 @@
 #include <list>
 #include <iterator>
 #include <algorithm>
+#include "../mavlink/v1.0/common/mavlink.h"
+#include "../mavlink/v1.0/common/common.h"
 
 class Observable;
 
@@ -18,7 +20,7 @@ protected:
 	typedef std::list<Observable*>::const_iterator const_iterator;
 	virtual ~Observateur() = 0;
 public:
-	virtual void Update(const Observable* observable) const ;
+	virtual void Update(const Observable* observable,mavlink_message_t msg){}
 
 	void AddObs(Observable* obs);
 	void DelObs(Observable* obs);
@@ -37,7 +39,8 @@ public:
 
 	virtual ~Observable();
 protected:
-	void Notify(void);
+	void Notify(mavlink_message_t value);
+
 
 };
 

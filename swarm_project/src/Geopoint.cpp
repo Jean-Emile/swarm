@@ -68,7 +68,9 @@ float Geopoint::getalt(){
 Vector3  Geopoint::getvector(){
 	return vector;
 }
-
+std::string Geopoint::toString(){
+return "";
+}
 
 double toRadians(double degree)
 {

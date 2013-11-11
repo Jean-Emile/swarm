@@ -25,32 +25,67 @@
 #include <time.h>
 #include "mavlink/v1.0/common/mavlink.h"
 #include "mavlink/v1.0/common/common.h"
-#include "Geopoint.h"
-#include "Drone.h"
+#include <Geopoint.h>
+#include <Drone.h>
+#include <atomic>
 #include <thread>
-#include "utils/Observateur.h"
+#include <utils/Observateur.h>
+#include <utils/Runnable.h>
 
 using namespace std;
 
-int serial_wait(int serial_fd);
 
-class Mavlink : public Observable
+
+
+class Mavlink : public Runnable,public Observable
 {
 public:
 	Mavlink();
 	virtual ~Mavlink();
 	int open(const char *uart_name,int baudrate);
-	int close();
+	int shutdown();
 	void wait();
 	void flyhere(Drone drone,Geopoint point);
 	void arm(Drone drone);
 	void disarm(Drone drone);
 	void landing(Drone drone);
+	void requestData(Drone drone);
+	
+	  /* Fonctions de création et destruction du singleton
+  static Mavlink *getInstance ()
+  {
+    if (NULL == _singleton)
+      {
+        std::cout << "creating singleton." << std::endl;
+        _singleton =  new Mavlink;
+      }
+    else
+      {
+        std::cout << "singleton already created!" << std::endl;
+      }
+
+    return _singleton;
+  }
+
+  static void kill ()
+  {
+    if (NULL != _singleton)
+      {
+        delete _singleton;
+        _singleton = NULL;
+      }
+  }
+*/
+
+protected:
+	void run();
 
 private:
-	thread task_serial;
 	int serial_fd;
-	
+	const char* uart_name;
+	int baudrate;
+	void restart();
+	void resquestStream(Drone drone,int req_stream_id,int rate);
 };
 
 

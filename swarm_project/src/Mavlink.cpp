@@ -19,23 +19,7 @@ using namespace std;
 
 
 
-Mavlink::Mavlink()
-{
-}
 
-Mavlink::~Mavlink()
-{
-}
-
-
-
-
-
-int Mavlink::close()
-{
-
-	return 0;
-}
 
 /**
  *
@@ -206,28 +190,49 @@ bool setup_port(int fd, int baud, int data_bits, int stop_bits, bool parity, boo
 	return true;
 }
 
-void close_port(int fd)
+
+Mavlink::Mavlink()
 {
-	close(fd);
 }
 
-/**
- * @brief Serial function
- *
- * This function blocks waiting for serial data in it's own thread
- * and forwards the data once received.
- */
-int serial_wait(int serial_fd)
+Mavlink::~Mavlink()
 {
-	int fd = serial_fd;
+}
 
+
+
+void Mavlink::restart(){
+cout << "Trying to reconnect" << endl;
+close(serial_fd);
+sleep(1);
+open(this->uart_name,this->baudrate);
+
+
+}
+
+int Mavlink::shutdown()
+{
+	stop();
+	close(serial_fd);
+
+	return 0;
+}
+
+
+
+
+
+/*
+ *  * This function blocks waiting for serial data in it's own thread
+ * and forwards the data once received.*/
+void Mavlink::run() {
+	
+	int fd = serial_fd;
 	mavlink_status_t lastStatus;
 	lastStatus.packet_rx_drop_count = 0;
-
-	// Blocking wait for new data
-	while (1)
-	{
-		//if (debug) printf("Checking for new data on serial port\n");
+	 while (!m_stop) 
+	 { 
+		if (debug) printf("Checking for new data on serial port\n");
 		// Block until data is available, read only one byte to be able to continue immediately
 		//char buf[MAVLINK_MAX_PACKET_LEN];
 		uint8_t cp;
@@ -253,6 +258,7 @@ int serial_wait(int serial_fd)
 		else
 		{
 			if (!silent) fprintf(stderr, "ERROR: Could not read from fd %d\n", fd);
+			restart();
 		}
 
 		// If a message could be decoded, handle it
@@ -284,8 +290,8 @@ int serial_wait(int serial_fd)
 				}
 			}
 
-			if (verbose || debug)
-				printf("Received message from serial with ID #%d (sys:%d|comp:%d):\n", message.msgid, message.sysid, message.compid);
+			
+			//printf("Received message from serial with ID #%d (sys:%d|comp:%d):\n", message.msgid, message.sysid, message.compid);
 
 			/* decode and print */
 
@@ -295,8 +301,9 @@ int serial_wait(int serial_fd)
 
 			// Only print every n-th message
 			//static unsigned int scaled_imu_receive_counter = 0;
-
-			//  Notify();
+		
+			this->Notify(message);
+			/*
 			switch (message.msgid)
 			{
 
@@ -333,23 +340,71 @@ int serial_wait(int serial_fd)
 
 			}
 			break;
-			}
+			}*/
 		}
-	}
-	return 0;
+
+
+	} 
+
+
 }
+
+
 
 void Mavlink::wait(){
-	task_serial.join();
+	join();
 }
 
 
+
+
+void Mavlink::resquestStream(Drone drone,int req_stream_id,int rate){
+	mavlink_message_t message;
+	char buf[300];
+	mavlink_request_data_stream_t item;
+	
+	item.target_system = drone.sysID;
+	item.target_component = 0;
+		
+	item.req_stream_id = req_stream_id; 
+	item.req_message_rate = rate;
+	item.start_stop = 1;
+	
+	
+	mavlink_msg_request_data_stream_encode(drone.sysID,0,&message,&item);
+
+	unsigned len = mavlink_msg_to_send_buffer((uint8_t*)buf, &message);
+
+	/* write packet via serial link */
+	write(serial_fd, buf, len);
+	/* wait until all data has been written */
+	tcdrain(serial_fd);
+	
+}
+void Mavlink::requestData(Drone drone){
+	
+	
+	resquestStream(drone,MAV_DATA_STREAM_POSITION,10);
+resquestStream(drone,MAV_DATA_STREAM_EXTENDED_STATUS,2);
+
+resquestStream(drone,MAV_DATA_STREAM_EXTRA1,3);
+resquestStream(drone,MAV_DATA_STREAM_EXTRA2,3);
+resquestStream(drone,MAV_DATA_STREAM_EXTRA3,3);
+
+
+
+
+	
+	
+	
+	
+}
 void Mavlink::flyhere(Drone drone,Geopoint point){
 	mavlink_message_t message;
 	char buf[300];
 	mavlink_mission_item_t item;
 	item.seq = 0;
-	item.target_system = drone.sysID;
+	item.target_system =7;
 	item.target_component = 0;
 	item.frame = MAV_FRAME_MISSION;
 	item.x = (float)point.getlat()/1e6;
@@ -390,6 +445,8 @@ void Mavlink::landing(Drone drone){
 
 
 int Mavlink::open(const char *uart_name,int baudrate){
+this->uart_name =uart_name;
+this->baudrate= baudrate;
 
 	printf("Trying to connect to %s.. \n", uart_name);
 
@@ -436,7 +493,7 @@ int Mavlink::open(const char *uart_name,int baudrate){
 	printf("\nREADY, waiting for serial data. %d \n",fd);
 	serial_fd = fd;
 
-	task_serial = thread(serial_wait,fd);
+	start();
 
 
 	return 0;
